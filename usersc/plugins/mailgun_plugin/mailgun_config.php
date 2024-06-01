@@ -1,5 +1,15 @@
 <?php
-$config['mailgun_api_key'] = 'YOUR_MAILGUN_API_KEY';
-$config['mailgun_domain'] = 'YOUR_MAILGUN_DOMAIN';
-
-// Load from database or environment variables in a real application.
+// Load existing settings if they exist
+if (file_exists(__DIR__ . '/mailgun_config.php')) {
+    $config = include __DIR__ . '/mailgun_config.php';
+} else {
+    $config = [
+        'mailgun_api_key' => '',
+        'mailgun_domain' => '',
+        'mailgun_from_name' => '',
+        'mailgun_from_email' => '',
+        'mailgun_reply_to' => '',
+        // Add any other default settings here
+    ];
+}
+?>

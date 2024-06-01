@@ -4,10 +4,11 @@ This UserSpice5 plugin integrates with Mailgun to handle email functionalities s
 
 ## Features
 
-- Send transactional emails using Mailgun
+- Send transactional emails using Mailgun API
 - Send newsletters and bulk emails
 - Manage email templates
 - Track email delivery and open rates
+- Admin interface for configuration and test email functionality
 
 ## Requirements
 

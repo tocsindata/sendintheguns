@@ -1,5 +1,5 @@
 <?php
-require_once '../../../users/init.php';
+require_once '../../../../users/init.php';
 require_once $abs_us_root . $us_url_root . 'users/includes/header.php';
 require_once $abs_us_root . $us_url_root . 'users/includes/navigation.php';
 
@@ -62,10 +62,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
         <div class="form-group">
             <label for="admin_email">Admin Email for Notifications:</label>
-            <input type="email" class="form-control" id="admin_email" name="admin_email" value="<?php echo $config->admin_email; ?>" required>
-        </div>
-        <button type="submit" class="btn btn-primary">Save Settings</button>
-    </form>
-</div>
-
-<?php require_once $abs_us_root . $us_url_root . 'users/includes/footer.php'; ?>
+            <input type="email" class="form-control" id="admin_email" name

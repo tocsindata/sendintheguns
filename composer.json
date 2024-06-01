@@ -1,13 +1,13 @@
 {
-    "name": "tocsindata/mailgun_plugin",
-    "description": "A UserSpice5 plugin to integrate Mailgun for sending emails.",
-    "require": {
-      "mailgun/mailgun-php": "^3.0"
-    },
-    "autoload": {
-      "psr-4": {
-        "MailgunPlugin\\": "usersc/plugins/mailgun_plugin/"
-      }
+  "name": "tocsindata/mailgun_plugin",
+  "description": "Mailgun Plugin for UserSpice",
+  "type": "project",
+  "require": {
+    "php": ">=7.3"
+  },
+  "autoload": {
+    "psr-4": {
+      "MailgunPlugin\\": "src/"
     }
   }
-  
+}

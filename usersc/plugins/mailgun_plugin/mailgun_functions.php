@@ -52,8 +52,11 @@ function sendMailgunEmail($to, $subject, $body, $attachments = []) {
 
     // Include custom headers if any
     if (!empty($config['mailgun_custom_headers'])) {
-        foreach ($config['mailgun_custom_headers'] as $header => $value) {
-            $params[$header] = $value;
+        $custom_headers = json_decode($config['mailgun_custom_headers'], true);
+        if (json_last_error() === JSON_ERROR_NONE) {
+            foreach ($custom_headers as $header => $value) {
+                $params[$header] = $value;
+            }
         }
     }
 

@@ -1,9 +1,5 @@
 <?php
-/*
-Plugin Name: Mailgun Plugin
-Description: A plugin to integrate Mailgun with UserSpice5.
-Version: 1.0
-Author: Your Name
-*/
-
-require_once 'init.php';
+// This file should contain the main plugin initialization logic
+require_once 'mailgun_config.php';
+require_once 'mailgun_functions.php';
+?>

@@ -12,6 +12,8 @@ if (!securePage($_SERVER['PHP_SELF'])){die();}
     <p>
         - Go to the Mailgun settings page in the UserSpice admin panel.<br>
         - Enter your Mailgun API key, domain, from name, from email address, and reply-to email.<br>
+        - Enter custom headers in JSON format if needed.<br>
+        - Enter the admin email for error notifications.<br>
         - Click the "Save Settings" button to save your configuration.
     </p>
 
@@ -71,7 +73,7 @@ if (!securePage($_SERVER['PHP_SELF'])){die();}
           &nbsp;&nbsp; - Click the "Delete Recipient" button.
     </p>
 
-    <h3>Setting Up Cron Job</h3>
+    <h3>8. Setting Up Cron Job</h3>
     <p>
         To ensure scheduled emails are sent at the specified times, you need to set up a cron job that runs the <code>cron_send_scheduled_emails.php</code> script at regular intervals. This script will check for scheduled emails and send them as needed.
     </p>

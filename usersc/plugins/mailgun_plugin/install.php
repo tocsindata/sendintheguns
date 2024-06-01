@@ -8,6 +8,7 @@ $email_templates_table = 'mailgun_email_templates';
 $scheduled_emails_table = 'mailgun_scheduled_emails';
 $email_stats_table = 'mailgun_email_stats';
 $recipients_table = 'mailgun_recipients';
+$error_logs_table = 'mailgun_error_logs';
 
 // Create email logs table if it doesn't exist
 $db = DB::getInstance();
@@ -79,4 +80,16 @@ $recipients_query = "
 ";
 $db->query($recipients_query);
 
+// Create error logs table if it doesn't exist
+$error_logs_query = "
+    CREATE TABLE IF NOT EXISTS `{$error_logs_table}` (
+        `id` int(11) NOT NULL AUTO_INCREMENT,
+        `error_message` text NOT NULL,
+        `timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        PRIMARY KEY (`id`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+";
+$db->query($error_logs_query);
+
 echo 'Mailgun plugin installed successfully!';
+?>

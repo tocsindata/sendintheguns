@@ -17,6 +17,7 @@ This UserSpice5 plugin integrates with Mailgun to handle email functionalities s
 - Manage Recipients
 - Responsive email templates
 - Error logging and notifications
+- Customizable Email Headers
 
 ## Requirements
 

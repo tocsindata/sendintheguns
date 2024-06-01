@@ -50,6 +50,13 @@ function sendMailgunEmail($to, $subject, $body, $attachments = []) {
         $params['h:Reply-To'] = $config['mailgun_reply_to'];
     }
 
+    // Include custom headers if any
+    if (!empty($config['mailgun_custom_headers'])) {
+        foreach ($config['mailgun_custom_headers'] as $header => $value) {
+            $params[$header] = $value;
+        }
+    }
+
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
     curl_setopt($ch, CURLOPT_USERPWD, 'api:' . $config['mailgun_api_key']);
@@ -74,12 +81,14 @@ function sendMailgunEmail($to, $subject, $body, $attachments = []) {
     $db->update($table_name, $email_id, ['status' => $status]);
 
     if ($httpStatus != 200) {
-        throw new Exception('Mailgun API request failed with status ' . $httpStatus . ': ' . $result);
+        $error_message = 'Mailgun API request failed with status ' . $httpStatus . ': ' . $result;
+        logMailgunError($error_message);
+        sendAdminNotification($error_message);
+        throw new Exception($error_message);
     }
 
     curl_close($ch);
 }
-
 
 function trackEmailOpen($email_id) {
     $db = DB::getInstance();
@@ -105,3 +114,19 @@ function getEmailLogs() {
     return $db->query("SELECT * FROM {$table_name}")->results();
 }
 
+function logMailgunError($error_message) {
+    $db = DB::getInstance();
+    $table_name = 'mailgun_error_logs';
+    $db->insert($table_name, [
+        'error_message' => $error_message,
+    ]);
+}
+
+function sendAdminNotification($error_message) {
+    global $config;
+    $admin_email = $config['admin_email'];
+    $subject = 'Mailgun Plugin Error Notification';
+    $body = 'An error occurred in the Mailgun Plugin: ' . $error_message;
+
+    mail($admin_email, $subject, $body);
+}

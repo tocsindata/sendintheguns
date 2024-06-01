@@ -1,17 +1,44 @@
 <?php
-require 'vendor/autoload.php';
-use Mailgun\Mailgun;
+require_once '../../../users/init.php';
+require_once $abs_us_root . $us_url_root . 'users/includes/dbconfig.php';
 
 function sendMailgunEmail($to, $subject, $body, $attachments = []) {
     global $config;
+    $db = DB::getInstance();
+    $table_name = 'mailgun_email_logs';
 
     if (empty($config['mailgun_api_key']) || empty($config['mailgun_domain'])) {
         throw new Exception('Mailgun API key or domain is not set.');
     }
 
-    $mg = Mailgun::create($config['mailgun_api_key']);
-    $domain = $config['mailgun_domain'];
+    // Generate tracking pixel URL
+    $tracking_pixel_url = $config['base_url'] . '/usersc/plugins/mailgun_plugin/track_open.php?email_id=';
 
+    // Generate tracking click URL
+    $tracking_click_url = $config['base_url'] . '/usersc/plugins/mailgun_plugin/track_click.php?email_id=';
+
+    // Generate unique email ID for tracking
+    $db->insert($table_name, [
+        'to_email' => $to,
+        'subject' => $subject,
+        'body' => $body,
+        'status' => 'pending',
+    ]);
+    $email_id = $db->lastId();
+
+    // Append tracking pixel to email body
+    $body .= '<img src="' . $tracking_pixel_url . $email_id . '" width="1" height="1" style="display:none;" />';
+
+    // Convert links in the email body to tracking links
+    $body = preg_replace_callback(
+        '/<a\s+href="([^"]+)"/i',
+        function ($matches) use ($tracking_click_url, $email_id) {
+            return '<a href="' . $tracking_click_url . $email_id . '&url=' . urlencode($matches[1]) . '"';
+        },
+        $body
+    );
+
+    $url = 'https://api.mailgun.net/v3/' . $config['mailgun_domain'] . '/messages';
     $params = [
         'from'    => $config['mailgun_from_name'] . ' <' . $config['mailgun_from_email'] . '>',
         'to'      => $to,
@@ -23,16 +50,58 @@ function sendMailgunEmail($to, $subject, $body, $attachments = []) {
         $params['h:Reply-To'] = $config['mailgun_reply_to'];
     }
 
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
+    curl_setopt($ch, CURLOPT_USERPWD, 'api:' . $config['mailgun_api_key']);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+    curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $params);
+
     if (!empty($attachments)) {
-        $params['attachment'] = [];
         foreach ($attachments as $file) {
-            $params['attachment'][] = ['filePath' => $file, 'filename' => basename($file)];
+            curl_setopt($ch, CURLOPT_POSTFIELDS, [
+                'attachment' => new CURLFile($file)
+            ]);
         }
     }
 
-    $mg->messages()->send($domain, $params);
+    $result = curl_exec($ch);
+    $httpStatus = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
+    // Update email status
+    $status = ($httpStatus == 200) ? 'sent' : 'failed';
+    $db->update($table_name, $email_id, ['status' => $status]);
+
+    if ($httpStatus != 200) {
+        throw new Exception('Mailgun API request failed with status ' . $httpStatus . ': ' . $result);
+    }
+
+    curl_close($ch);
+}
+
+
+function trackEmailOpen($email_id) {
+    $db = DB::getInstance();
+    $table_name = 'mailgun_email_stats';
+    $db->insert($table_name, [
+        'email_id' => $email_id,
+        'event_type' => 'open',
+    ]);
+}
+
+function trackEmailClick($email_id) {
+    $db = DB::getInstance();
+    $table_name = 'mailgun_email_stats';
+    $db->insert($table_name, [
+        'email_id' => $email_id,
+        'event_type' => 'click',
+    ]);
 }
 
 function getEmailLogs() {
-    // Function to retrieve email logs.
+    $db = DB::getInstance();
+    $table_name = 'mailgun_email_logs';
+    return $db->query("SELECT * FROM {$table_name}")->results();
 }
+

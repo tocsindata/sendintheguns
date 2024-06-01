@@ -9,6 +9,14 @@ This UserSpice5 plugin integrates with Mailgun to handle email functionalities s
 - Manage email templates
 - Track email delivery and open rates
 - Admin interface for configuration and test email functionality
+- Log emails to the MySQL database
+- Debugging options
+- Email Templates Management (create, edit, delete)
+- Email Scheduling
+- Email Statistics and Reporting
+- Manage Recipients
+- Responsive email templates
+- Error logging and notifications
 
 ## Requirements
 

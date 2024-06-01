@@ -8,6 +8,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $config['mailgun_from_name'] = $_POST['mailgun_from_name'];
     $config['mailgun_from_email'] = $_POST['mailgun_from_email'];
     $config['mailgun_reply_to'] = $_POST['mailgun_reply_to'];
+    $config['mailgun_debug'] = isset($_POST['mailgun_debug']);
 
     // Save the configuration to a file
     file_put_contents(__DIR__ . '/mailgun_config.php', '<?php return ' . var_export($config, true) . ';');
@@ -35,8 +36,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <label for="mailgun_reply_to">Reply-To Email:</label>
     <input type="email" id="mailgun_reply_to" name="mailgun_reply_to" value="<?php echo htmlspecialchars($config['mailgun_reply_to']); ?>">
     <br><br>
+    <label for="mailgun_debug">Enable Debug:</label>
+    <input type="checkbox" id="mailgun_debug" name="mailgun_debug" <?php if ($config['mailgun_debug']) echo 'checked'; ?>>
+    <br><br>
     <input type="submit" value="Save Settings">
 </form>
-
-<h3>Test Email</h3>
-<p><a href="test_mailgun.php">Send a Test Email</a></p>

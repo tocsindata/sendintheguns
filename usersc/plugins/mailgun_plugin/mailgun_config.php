@@ -9,7 +9,7 @@ if (file_exists(__DIR__ . '/mailgun_config.php')) {
         'mailgun_from_name' => '',
         'mailgun_from_email' => '',
         'mailgun_reply_to' => '',
-        // Add any other default settings here
+        'mailgun_debug' => false,
     ];
 }
 ?>

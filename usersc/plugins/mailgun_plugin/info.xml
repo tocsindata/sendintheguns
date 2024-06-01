@@ -5,4 +5,5 @@
     <author>Daniel Focsarini</author>
     <authorEmail>your-email@example.com</authorEmail>
     <url>https://tocsindata.com</url>
+    <configPage>mailgun_plugin/configure.php</configPage>
 </plugin>

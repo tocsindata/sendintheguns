@@ -1,5 +1,7 @@
 # UserSpice5 Mailgun Plugin
 
+# THIS IS STILL IN BETA USE WITH CAUTION
+
 This UserSpice5 plugin integrates with Mailgun to handle email functionalities such as sending transactional emails, newsletters, and more. It mimics the functionality of the Sendinblue plugin but uses Mailgun as the email service provider.
 
 ## Features
